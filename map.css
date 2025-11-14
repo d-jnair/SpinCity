@@ -2,8 +2,9 @@
   --topbar-height: 84px;
   --map-radius: 8px;
   --map-shadow: 0 4px 12px rgba(0,0,0,0.12);
-  --accent: hotpink;
-  --arrival: orange;
+  --color-departures: rgb(125, 9, 138);
+  --color-balanced: rgb(251, 89, 170);
+  --color-arrivals: darkorange;
 }
 
 html, body {
@@ -87,48 +88,55 @@ main {
 #map circle {
   stroke: white;
   stroke-width: 1;
-  fill-opacity: 0.6;
+  fill-opacity: 0.8;
   pointer-events: auto;
-  --departure-ratio: 0.5;
 }
 
 .legend {
   display: flex;
-  gap: 6px;
-  margin-top: 12px;
-  font-size: 0.9rem;
   justify-content: center;
   align-items: center;
+  margin-top: 12px;
+  font-size: 16px;
+  gap: 10px;
+}
+
+.legend-item {
+  flex: 1;
+  text-align: center;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  color: white;
+}
+
+.legend-item[style*="--departure-ratio: 1"] {
+  background-color: var(--color-departures);
+}
+
+.legend-item[style*="--departure-ratio: 0.5"] {
+  background-color: var(--color-balanced);
+}
+
+.legend-item[style*="--departure-ratio: 0"] {
+  background-color: var(--color-arrivals);
 }
 
 .legend > div {
-  flex: 1;
-  text-align: center;
-  padding: 6px 12px;
-  border-radius: 6px;
-  color: white;
-  font-weight: 600;
-  --color-departures: var(--accent);
-  --color-arrivals: var(--arrival);
-  background: linear-gradient(90deg,
-    color-mix(in oklch, var(--color-departures) 100%, var(--color-arrivals)) 0%,
-    color-mix(in oklch, var(--color-departures) 50%, var(--color-arrivals)) 50%,
-    color-mix(in oklch, var(--color-departures) 0%, var(--color-arrivals)) 100%);
+    flex: 1;
+    text-align: center;        
+    padding: 8px 12px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-#legend {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 20px;
-}
-
-#legend-gradient {
-  width: 100%;
-  height: 40px;
-  background: linear-gradient(to right, darkblue, hotpink, goldenrod);
-  border-radius: 4px;
-}
+.legend > div.more-departures { background-color: var(--color-departures); }
+.legend > div.balanced       { background-color: var(--color-balanced); }
+.legend > div.more-arrivals  { background-color: var(--color-arrivals); }
 
 @media (max-width: 560px) {
   #time-slider { width: 160px; }

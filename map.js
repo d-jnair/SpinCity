@@ -118,16 +118,21 @@ map.on('load', async () => {
     .domain([0, d3.max(stations, d => d.totalTraffic) || 1])
     .range([0, 25]);
 
-  const colorScale = d3.scaleDiverging()
-    .domain([-1, 0, 1])
-    .range(["darkblue", "hotpink", "goldenrod"]);
+//   const colorScale = d3.scaleDiverging()
+//     .domain([-1, 0, 1])
+//     .range(["darkblue", "hotpink", "goldenrod"]);
+    function getStationColor(balance) {
+      if (balance < -0.05) return 'rgb(125, 9, 138)';
+      if (balance > 0.05) return 'darkorange';
+      return 'hotpink';
+    }
 
   let circles = svg.selectAll('circle')
     .data(stations, d => d.short_name ?? d.Number ?? d.station_id)
     .enter()
     .append('circle')
     .attr('r', d => radiusScale(d.totalTraffic))
-    .attr('fill', d => colorScale(d.balance))
+    .attr('fill', d => getStationColor(d.balance))
     .attr('stroke', 'white')
     .attr('stroke-width', 1)
     .attr('opacity', 0.8)
@@ -169,15 +174,16 @@ map.on('load', async () => {
           .attr('stroke-width', 1)
           .attr('opacity', 0.8)
           .style('pointer-events', 'auto')
-          .each(function (d) {
-            d3.select(this).append('title').text(`${d.totalTraffic} trips (${d.departures} departures, ${d.arrivals} arrivals)`);
-          }),
-        update => update
+          .attr('fill', d => getStationColor(d.balance))
+          .each(d => d3.select(this).append('title')
+            .text(`${d.totalTraffic} trips (${d.departures} departures, ${d.arrivals} arrivals)`)),
+          update => update
           .attr('r', d => radiusScale(d.totalTraffic))
-          .attr('fill', d => colorScale(d.balance)) 
-          .each(function (d) {
-            d3.select(this).select('title').text(`${d.totalTraffic} trips (${d.departures} departures, ${d.arrivals} arrivals)`);
-          }),
+          .attr('fill', d => getStationColor(d.balance))
+          .each(function(d) {
+            d3.select(this).select('title')
+              .text(`${d.totalTraffic} trips (${d.departures} departures, ${d.arrivals} arrivals)`);
+        }),
         exit => exit.remove()
       );
     updatePositions();
